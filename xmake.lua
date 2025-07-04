@@ -1,4 +1,5 @@
-local out_dir = os.getenv("GTA_SA_DIR") or path.join(os.projectdir(), "bin")
+local out_dir = path.join(os.projectdir(), "bin")
+local gta_dir = os.getenv("GTA_SA_DIR") or  path.join(os.projectdir(), "to_sa_dir")
 local dxsdk = "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)"
 
 add_rules("mode.debug", "mode.release")
@@ -10,6 +11,12 @@ set_arch("x86")
 
 target("RebindKit")
     add_files("src/RebindKit/*.cpp")
+    after_link(function (target)
+        os.cp(target:targetfile(), gta_dir)
+    end)
 
 target("dinput8")
     add_files("src/dinput8/dinput8.cpp")
+    after_link(function (target)
+        os.cp(target:targetfile(), gta_dir)
+    end)
