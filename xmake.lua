@@ -1,0 +1,25 @@
+local out_dir = path.join(os.projectdir(), "bin")
+local gta_dir = os.getenv("GTA_SA_DIR") or  path.join(os.projectdir(), "to_sa_dir")
+local dxsdk = "C:/Program Files (x86)/Microsoft DirectX SDK (June 2010)"
+
+add_rules("mode.debug", "mode.release")
+set_languages("c++23")
+set_kind("shared")
+set_targetdir(out_dir)
+add_syslinks("user32")
+set_arch("x86") 
+
+target("RebindKit")
+    add_includedirs("third_party/minhook/include", {public = true})
+    add_files("src/rebind/*.cpp")
+    add_files("third_party/minhook/src/*.c")
+    add_files("third_party/minhook/src/hde/hde32.c")
+    after_link(function (target)
+        os.cp(target:targetfile(), path.join(gta_dir, "kits"))
+    end)
+
+target("dinput8")
+    add_files("src/dinput8/dinput8.cpp")
+    after_link(function (target)
+        os.cp(target:targetfile(), gta_dir)
+    end)
